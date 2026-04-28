@@ -1,0 +1,115 @@
+<?xml version="1.0"?>
+<robot name="industrial_arm">
+  <virtual_joint name="virtual_joint" type="fixed" parent_frame="world" child_link="base_link"/>
+
+  <group name="arm">
+    <chain base_link="base_link" tip_link="tool0"/>
+  </group>
+
+  <group name="gripper">
+    <joint name="gripper_joint"/>
+  </group>
+
+  <end_effector name="gripper_ee" parent_link="gripper_base_link" group="gripper"/>
+
+  <group_state name="home" group="arm">
+    <joint name="shoulder_pan_joint" value="2.40"/>
+    <joint name="shoulder_lift_joint" value="0.40"/>
+    <joint name="elbow_joint" value="-1.10"/>
+    <joint name="wrist_pitch_joint" value="0.75"/>
+    <joint name="wrist_yaw_joint" value="1.57"/>
+    <joint name="wrist_roll_joint" value="0.0"/>
+  </group_state>
+
+  <group_state name="pre_grasp" group="arm">
+    <joint name="shoulder_pan_joint" value="0.0"/>
+    <joint name="shoulder_lift_joint" value="-0.42"/>
+    <joint name="elbow_joint" value="1.05"/>
+    <joint name="wrist_pitch_joint" value="-0.78"/>
+    <joint name="wrist_yaw_joint" value="1.57"/>
+    <joint name="wrist_roll_joint" value="0.0"/>
+  </group_state>
+
+  <group_state name="grasp" group="arm">
+    <joint name="shoulder_pan_joint" value="0.0"/>
+    <joint name="shoulder_lift_joint" value="-0.50"/>
+    <joint name="elbow_joint" value="1.15"/>
+    <joint name="wrist_pitch_joint" value="-0.92"/>
+    <joint name="wrist_yaw_joint" value="1.57"/>
+    <joint name="wrist_roll_joint" value="0.0"/>
+  </group_state>
+
+  <group_state name="lift" group="arm">
+    <joint name="shoulder_pan_joint" value="0.0"/>
+    <joint name="shoulder_lift_joint" value="-0.25"/>
+    <joint name="elbow_joint" value="0.95"/>
+    <joint name="wrist_pitch_joint" value="-0.70"/>
+    <joint name="wrist_yaw_joint" value="1.57"/>
+    <joint name="wrist_roll_joint" value="0.0"/>
+  </group_state>
+
+  <group_state name="transit" group="arm">
+    <joint name="shoulder_pan_joint" value="0.18"/>
+    <joint name="shoulder_lift_joint" value="-0.18"/>
+    <joint name="elbow_joint" value="0.94"/>
+    <joint name="wrist_pitch_joint" value="-0.76"/>
+    <joint name="wrist_yaw_joint" value="1.57"/>
+    <joint name="wrist_roll_joint" value="0.0"/>
+  </group_state>
+
+  <group_state name="scan_pose" group="arm">
+    <joint name="shoulder_pan_joint" value="-0.05"/>
+    <joint name="shoulder_lift_joint" value="-0.12"/>
+    <joint name="elbow_joint" value="0.88"/>
+    <joint name="wrist_pitch_joint" value="-0.74"/>
+    <joint name="wrist_yaw_joint" value="1.57"/>
+    <joint name="wrist_roll_joint" value="0.0"/>
+  </group_state>
+
+  <group_state name="bin_a" group="arm">
+    <joint name="shoulder_pan_joint" value="0.90"/>
+    <joint name="shoulder_lift_joint" value="-0.20"/>
+    <joint name="elbow_joint" value="0.85"/>
+    <joint name="wrist_pitch_joint" value="-0.60"/>
+    <joint name="wrist_yaw_joint" value="1.57"/>
+    <joint name="wrist_roll_joint" value="0.0"/>
+  </group_state>
+
+  <group_state name="bin_b" group="arm">
+    <joint name="shoulder_pan_joint" value="0.65"/>
+    <joint name="shoulder_lift_joint" value="-0.18"/>
+    <joint name="elbow_joint" value="0.82"/>
+    <joint name="wrist_pitch_joint" value="-0.58"/>
+    <joint name="wrist_yaw_joint" value="1.57"/>
+    <joint name="wrist_roll_joint" value="0.0"/>
+  </group_state>
+
+  <group_state name="bin_c" group="arm">
+    <joint name="shoulder_pan_joint" value="0.40"/>
+    <joint name="shoulder_lift_joint" value="-0.15"/>
+    <joint name="elbow_joint" value="0.78"/>
+    <joint name="wrist_pitch_joint" value="-0.55"/>
+    <joint name="wrist_yaw_joint" value="1.57"/>
+    <joint name="wrist_roll_joint" value="0.0"/>
+  </group_state>
+
+  <group_state name="gripper_open" group="gripper">
+    <joint name="gripper_joint" value="0.04"/>
+  </group_state>
+
+  <group_state name="gripper_closed" group="gripper">
+    <joint name="gripper_joint" value="0.0"/>
+  </group_state>
+
+  <disable_collisions link1="base_link" link2="shoulder_link" reason="Adjacent"/>
+  <disable_collisions link1="shoulder_link" link2="upper_arm_link" reason="Adjacent"/>
+  <disable_collisions link1="upper_arm_link" link2="forearm_link" reason="Adjacent"/>
+  <disable_collisions link1="forearm_link" link2="wrist_pitch_link" reason="Adjacent"/>
+  <disable_collisions link1="wrist_pitch_link" link2="wrist_yaw_link" reason="Adjacent"/>
+  <disable_collisions link1="wrist_yaw_link" link2="wrist_roll_link" reason="Adjacent"/>
+  <disable_collisions link1="wrist_roll_link" link2="gripper_base_link" reason="Adjacent"/>
+  <disable_collisions link1="gripper_base_link" link2="gripper_slider_link" reason="Adjacent"/>
+  <disable_collisions link1="gripper_base_link" link2="tool0" reason="Adjacent"/>
+  <disable_collisions link1="camera_link" link2="gripper_base_link" reason="Adjacent"/>
+  <disable_collisions link1="camera_link" link2="wrist_roll_link" reason="Never"/>
+</robot>

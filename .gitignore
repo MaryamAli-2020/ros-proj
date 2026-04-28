@@ -1,0 +1,10 @@
+build/
+install/
+log/
+*.pyc
+__pycache__/
+.vscode/
+.idea/
+TECHNICAL_REPORT.md
+TECHNICAL_REPORT_OUTLINE.md
+PRESENTATION_OUTLINE.md

@@ -1,0 +1,12 @@
+decision_node:
+  ros__parameters:
+    use_sim_time: true
+    qr_topic: /perception/decoded_qr
+    bin_target_topic: /decision_logic/bin_target
+    default_bin_id: bin_a
+    qr_to_bin.RED: bin_a
+    qr_to_bin.BLUE: bin_b
+    qr_to_bin.GREEN: bin_c
+    bin_pose.bin_a: [0.62, 0.55, 1.18, 0.0, -0.7071068, 0.0, 0.7071068]
+    bin_pose.bin_b: [0.82, 0.55, 1.18, 0.0, -0.7071068, 0.0, 0.7071068]
+    bin_pose.bin_c: [1.02, 0.55, 1.18, 0.0, -0.7071068, 0.0, 0.7071068]

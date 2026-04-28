@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<sdf version="1.7">
+  <model name="work_table">
+    <static>true</static>
+    <link name="table_link">
+      <visual name="top_visual">
+        <pose>0 0 0.75 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.70 0.50 0.05</size>
+          </box>
+        </geometry>
+        <material>
+          <ambient>0.6 0.6 0.6 1</ambient>
+          <diffuse>0.6 0.6 0.6 1</diffuse>
+        </material>
+      </visual>
+      <visual name="leg_1_visual">
+        <pose>0.30 0.20 0.375 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.05 0.05 0.75</size>
+          </box>
+        </geometry>
+      </visual>
+      <visual name="leg_2_visual">
+        <pose>0.30 -0.20 0.375 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.05 0.05 0.75</size>
+          </box>
+        </geometry>
+      </visual>
+      <visual name="leg_3_visual">
+        <pose>-0.30 0.20 0.375 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.05 0.05 0.75</size>
+          </box>
+        </geometry>
+      </visual>
+      <visual name="leg_4_visual">
+        <pose>-0.30 -0.20 0.375 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.05 0.05 0.75</size>
+          </box>
+        </geometry>
+      </visual>
+    </link>
+  </model>
+</sdf>

@@ -1,0 +1,431 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="industrial_arm">
+  <xacro:arg name="use_gazebo_control" default="false"/>
+  <xacro:arg name="controllers_file" default=""/>
+
+  <material name="mat_dark">
+    <color rgba="0.15 0.15 0.18 1.0"/>
+  </material>
+  <material name="mat_light">
+    <color rgba="0.75 0.77 0.82 1.0"/>
+  </material>
+  <material name="mat_accent">
+    <color rgba="0.83 0.32 0.18 1.0"/>
+  </material>
+  <material name="mat_camera">
+    <color rgba="0.08 0.08 0.08 1.0"/>
+  </material>
+
+  <xacro:macro name="box_inertial" params="mass x y z">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="${mass}"/>
+      <inertia
+        ixx="${mass * (y * y + z * z) / 12.0}"
+        ixy="0.0"
+        ixz="0.0"
+        iyy="${mass * (x * x + z * z) / 12.0}"
+        iyz="0.0"
+        izz="${mass * (x * x + y * y) / 12.0}"/>
+    </inertial>
+  </xacro:macro>
+
+  <xacro:macro name="cylinder_inertial" params="mass radius length">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="${mass}"/>
+      <inertia
+        ixx="${mass * (3.0 * radius * radius + length * length) / 12.0}"
+        ixy="0.0"
+        ixz="0.0"
+        iyy="${mass * (3.0 * radius * radius + length * length) / 12.0}"
+        iyz="0.0"
+        izz="${0.5 * mass * radius * radius}"/>
+    </inertial>
+  </xacro:macro>
+
+  <link name="base_link">
+    <visual>
+      <origin xyz="0 0 0.35" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.12" length="0.70"/>
+      </geometry>
+      <material name="mat_dark"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0.35" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.12" length="0.70"/>
+      </geometry>
+    </collision>
+    <xacro:cylinder_inertial mass="18.0" radius="0.12" length="0.70"/>
+  </link>
+
+  <xacro:if value="$(arg use_gazebo_control)">
+    <link name="world"/>
+
+    <joint name="world_to_base_joint" type="fixed">
+      <parent link="world"/>
+      <child link="base_link"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+    </joint>
+  </xacro:if>
+
+  <link name="shoulder_link">
+    <visual>
+      <origin xyz="0.05 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.14 0.16 0.16"/>
+      </geometry>
+      <material name="mat_light"/>
+    </visual>
+    <collision>
+      <origin xyz="0.05 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.14 0.16 0.16"/>
+      </geometry>
+    </collision>
+    <xacro:box_inertial mass="4.0" x="0.14" y="0.16" z="0.16"/>
+  </link>
+
+  <joint name="shoulder_pan_joint" type="revolute">
+    <parent link="base_link"/>
+    <child link="shoulder_link"/>
+    <origin xyz="0 0 0.80" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-3.14159" upper="3.14159" effort="90.0" velocity="1.5"/>
+    <dynamics damping="0.1" friction="0.05"/>
+  </joint>
+
+  <link name="upper_arm_link">
+    <visual>
+      <origin xyz="0.18 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.36 0.10 0.12"/>
+      </geometry>
+      <material name="mat_light"/>
+    </visual>
+    <collision>
+      <origin xyz="0.18 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.36 0.10 0.12"/>
+      </geometry>
+    </collision>
+    <xacro:box_inertial mass="5.0" x="0.36" y="0.10" z="0.12"/>
+  </link>
+
+  <joint name="shoulder_lift_joint" type="revolute">
+    <parent link="shoulder_link"/>
+    <child link="upper_arm_link"/>
+    <origin xyz="0.08 0 0" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="-1.8" upper="1.6" effort="80.0" velocity="1.5"/>
+    <dynamics damping="0.1" friction="0.05"/>
+  </joint>
+
+  <link name="forearm_link">
+    <visual>
+      <origin xyz="0.16 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.32 0.09 0.10"/>
+      </geometry>
+      <material name="mat_accent"/>
+    </visual>
+    <collision>
+      <origin xyz="0.16 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.32 0.09 0.10"/>
+      </geometry>
+    </collision>
+    <xacro:box_inertial mass="3.8" x="0.32" y="0.09" z="0.10"/>
+  </link>
+
+  <joint name="elbow_joint" type="revolute">
+    <parent link="upper_arm_link"/>
+    <child link="forearm_link"/>
+    <origin xyz="0.36 0 0" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="-2.1" upper="2.1" effort="70.0" velocity="1.5"/>
+    <dynamics damping="0.1" friction="0.05"/>
+  </joint>
+
+  <link name="wrist_pitch_link">
+    <visual>
+      <origin xyz="0.08 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.16 0.08 0.08"/>
+      </geometry>
+      <material name="mat_light"/>
+    </visual>
+    <collision>
+      <origin xyz="0.08 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.16 0.08 0.08"/>
+      </geometry>
+    </collision>
+    <xacro:box_inertial mass="1.4" x="0.16" y="0.08" z="0.08"/>
+  </link>
+
+  <joint name="wrist_pitch_joint" type="revolute">
+    <parent link="forearm_link"/>
+    <child link="wrist_pitch_link"/>
+    <origin xyz="0.32 0 0" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="-2.4" upper="2.4" effort="40.0" velocity="2.0"/>
+    <dynamics damping="0.08" friction="0.02"/>
+  </joint>
+
+  <link name="wrist_yaw_link">
+    <visual>
+      <origin xyz="0.06 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.045" length="0.12"/>
+      </geometry>
+      <material name="mat_light"/>
+    </visual>
+    <collision>
+      <origin xyz="0.06 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.045" length="0.12"/>
+      </geometry>
+    </collision>
+    <xacro:cylinder_inertial mass="1.0" radius="0.045" length="0.12"/>
+  </link>
+
+  <joint name="wrist_yaw_joint" type="revolute">
+    <parent link="wrist_pitch_link"/>
+    <child link="wrist_yaw_link"/>
+    <origin xyz="0.16 0 0" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-3.14159" upper="3.14159" effort="35.0" velocity="2.0"/>
+    <dynamics damping="0.08" friction="0.02"/>
+  </joint>
+
+  <link name="wrist_roll_link">
+    <visual>
+      <origin xyz="0.05 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.04" length="0.10"/>
+      </geometry>
+      <material name="mat_accent"/>
+    </visual>
+    <collision>
+      <origin xyz="0.05 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.04" length="0.10"/>
+      </geometry>
+    </collision>
+    <xacro:cylinder_inertial mass="0.9" radius="0.04" length="0.10"/>
+  </link>
+
+  <joint name="wrist_roll_joint" type="revolute">
+    <parent link="wrist_yaw_link"/>
+    <child link="wrist_roll_link"/>
+    <origin xyz="0.12 0 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0"/>
+    <limit lower="-3.14159" upper="3.14159" effort="30.0" velocity="2.0"/>
+    <dynamics damping="0.08" friction="0.02"/>
+  </joint>
+
+  <link name="gripper_base_link">
+    <visual>
+      <origin xyz="0.06 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.12 0.10 0.06"/>
+      </geometry>
+      <material name="mat_dark"/>
+    </visual>
+    <collision>
+      <origin xyz="0.06 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.12 0.10 0.06"/>
+      </geometry>
+    </collision>
+    <visual>
+      <origin xyz="0.10 -0.04 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.08 0.02 0.07"/>
+      </geometry>
+      <material name="mat_light"/>
+    </visual>
+    <collision>
+      <origin xyz="0.10 -0.04 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.08 0.02 0.07"/>
+      </geometry>
+    </collision>
+    <xacro:box_inertial mass="0.8" x="0.12" y="0.10" z="0.06"/>
+  </link>
+
+  <joint name="tool_mount_joint" type="fixed">
+    <parent link="wrist_roll_link"/>
+    <child link="gripper_base_link"/>
+    <origin xyz="0.10 0 0" rpy="0 0 0"/>
+  </joint>
+
+  <link name="gripper_slider_link">
+    <visual>
+      <origin xyz="0.05 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.10 0.02 0.07"/>
+      </geometry>
+      <material name="mat_light"/>
+    </visual>
+    <collision>
+      <origin xyz="0.05 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.10 0.02 0.07"/>
+      </geometry>
+    </collision>
+    <xacro:box_inertial mass="0.2" x="0.10" y="0.02" z="0.07"/>
+  </link>
+
+  <joint name="gripper_joint" type="prismatic">
+    <parent link="gripper_base_link"/>
+    <child link="gripper_slider_link"/>
+    <origin xyz="0.03 0.04 0" rpy="0 0 0"/>
+    <axis xyz="0 -1 0"/>
+    <limit lower="0.0" upper="0.04" effort="40.0" velocity="0.2"/>
+    <dynamics damping="0.05" friction="0.02"/>
+  </joint>
+
+  <link name="tool0"/>
+
+  <joint name="tool0_joint" type="fixed">
+    <parent link="gripper_base_link"/>
+    <child link="tool0"/>
+    <origin xyz="0.14 0 0" rpy="0 0 0"/>
+  </joint>
+
+  <link name="camera_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.04 0.04 0.04"/>
+      </geometry>
+      <material name="mat_camera"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.04 0.04 0.04"/>
+      </geometry>
+    </collision>
+    <xacro:box_inertial mass="0.1" x="0.04" y="0.04" z="0.04"/>
+  </link>
+
+  <joint name="camera_mount_joint" type="fixed">
+    <parent link="gripper_base_link"/>
+    <child link="camera_link"/>
+    <origin xyz="0.08 0.0 0.08" rpy="0 0 0"/>
+  </joint>
+
+  <link name="camera_optical_frame"/>
+
+  <joint name="camera_optical_joint" type="fixed">
+    <parent link="camera_link"/>
+    <child link="camera_optical_frame"/>
+    <origin xyz="0 0 0" rpy="-1.57079632679 0 -1.57079632679"/>
+  </joint>
+
+  <gazebo reference="base_link">
+    <material>Gazebo/DarkGrey</material>
+  </gazebo>
+  <gazebo reference="upper_arm_link">
+    <material>Gazebo/Grey</material>
+  </gazebo>
+  <gazebo reference="forearm_link">
+    <material>Gazebo/Orange</material>
+  </gazebo>
+  <gazebo reference="gripper_base_link">
+    <material>Gazebo/Black</material>
+  </gazebo>
+  <gazebo reference="camera_link">
+    <sensor type="camera" name="wrist_camera">
+      <always_on>true</always_on>
+      <update_rate>15</update_rate>
+      <visualize>false</visualize>
+      <pose>0 0 0 0 0 0</pose>
+      <camera>
+        <horizontal_fov>1.047</horizontal_fov>
+        <image>
+          <width>640</width>
+          <height>480</height>
+          <format>R8G8B8</format>
+        </image>
+        <clip>
+          <near>0.02</near>
+          <far>2.0</far>
+        </clip>
+      </camera>
+      <plugin name="wrist_camera_plugin" filename="libgazebo_ros_camera.so">
+        <frame_name>camera_optical_frame</frame_name>
+        <camera_name>wrist_camera</camera_name>
+        <hack_baseline>0.0</hack_baseline>
+      </plugin>
+    </sensor>
+  </gazebo>
+
+  <xacro:if value="$(arg use_gazebo_control)">
+    <ros2_control name="GazeboSimSystem" type="system">
+      <hardware>
+        <plugin>gazebo_ros2_control/GazeboSystem</plugin>
+      </hardware>
+      <joint name="shoulder_pan_joint">
+        <command_interface name="position">
+          <param name="initial_value">2.40</param>
+        </command_interface>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+      </joint>
+      <joint name="shoulder_lift_joint">
+        <command_interface name="position">
+          <param name="initial_value">0.40</param>
+        </command_interface>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+      </joint>
+      <joint name="elbow_joint">
+        <command_interface name="position">
+          <param name="initial_value">-1.10</param>
+        </command_interface>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+      </joint>
+      <joint name="wrist_pitch_joint">
+        <command_interface name="position">
+          <param name="initial_value">0.75</param>
+        </command_interface>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+      </joint>
+      <joint name="wrist_yaw_joint">
+        <command_interface name="position">
+          <param name="initial_value">1.57</param>
+        </command_interface>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+      </joint>
+      <joint name="wrist_roll_joint">
+        <command_interface name="position">
+          <param name="initial_value">0.0</param>
+        </command_interface>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+      </joint>
+      <joint name="gripper_joint">
+        <command_interface name="position">
+          <param name="initial_value">0.04</param>
+        </command_interface>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+      </joint>
+    </ros2_control>
+
+    <gazebo>
+      <plugin name="gazebo_ros2_control" filename="libgazebo_ros2_control.so">
+        <parameters>$(arg controllers_file)</parameters>
+      </plugin>
+    </gazebo>
+  </xacro:if>
+</robot>

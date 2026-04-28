@@ -1,0 +1,21 @@
+qr_decoder_bridge:
+  ros__parameters:
+    use_sim_time: true
+    barcode_topic: /barcode
+    decoded_topic: /perception/decoded_qr
+    deduplicate_messages: true
+    republish_on_repeat_after_sec: 2.0
+    accepted_codes:
+      - RED
+      - BLUE
+      - GREEN
+
+mock_qr_stream:
+  ros__parameters:
+    use_sim_time: true
+    qr_text: RED
+    output_topic: /demo_qr/image_raw
+    frame_id: camera_optical_frame
+    publish_rate_hz: 2.0
+    image_size_px: 480
+

@@ -1,0 +1,14 @@
+coordinator_node:
+  ros__parameters:
+    use_sim_time: true
+    auto_start: true
+    start_delay_sec: 6.0
+    scan_timeout_sec: 10.0
+    reset_object_before_cycle: true
+    perform_initial_home_stage: false
+    manipulation_service: /manipulation/execute_stage
+    attachment_service: /simulation/set_attachment
+    reset_service: /simulation/reset_object
+    decoded_qr_topic: /perception/decoded_qr
+    bin_target_topic: /decision_logic/bin_target
+    state_topic: /coordinator/state

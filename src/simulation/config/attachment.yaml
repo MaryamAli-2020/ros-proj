@@ -1,0 +1,12 @@
+grasp_attachment_node:
+  ros__parameters:
+    use_sim_time: true
+    object_name: qr_object
+    world_frame: world
+    tool_frame: tool0
+    follow_rate_hz: 20.0
+    attach_offset: [-0.05, 0.0, 0.01]
+    primary_entity_state_service: /gazebo/set_entity_state
+    fallback_entity_state_service: /set_entity_state
+    service_call_timeout_sec: 0.5
+    reset_pose: [0.72, 0.0, 0.825, 0.0, 0.0, 0.0, 1.0]

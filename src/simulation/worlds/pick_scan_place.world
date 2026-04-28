@@ -1,0 +1,308 @@
+<?xml version="1.0" ?>
+<sdf version="1.7">
+  <world name="pick_scan_place">
+    <plugin name="gazebo_ros_state" filename="libgazebo_ros_state.so"/>
+
+    <include>
+      <uri>model://ground_plane</uri>
+    </include>
+    <include>
+      <uri>model://sun</uri>
+    </include>
+
+    <gravity>0 0 -9.81</gravity>
+
+    <light name="cell_fill_light" type="point">
+      <pose>0.45 0.0 2.0 0 0 0</pose>
+      <diffuse>1 1 1 1</diffuse>
+      <specular>0.2 0.2 0.2 1</specular>
+      <attenuation>
+        <range>15</range>
+        <constant>0.8</constant>
+        <linear>0.02</linear>
+        <quadratic>0.001</quadratic>
+      </attenuation>
+      <cast_shadows>true</cast_shadows>
+    </light>
+
+    <include>
+      <uri>model://work_table</uri>
+      <name>pick_table</name>
+      <pose>0.72 0.0 0 0 0 0</pose>
+    </include>
+
+    <model name="pick_station_fixture">
+      <static>true</static>
+      <pose>0.72 0.0 0.78 0 0 0</pose>
+      <link name="fixture_link">
+        <visual name="fixture_visual">
+          <pose>0 0 0.03 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>0.18 0.18 0.06</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.25 0.25 0.25 1</ambient>
+            <diffuse>0.25 0.25 0.25 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="pick_object_support">
+      <static>true</static>
+      <pose>0.72 0.0 0.765 0 0 0</pose>
+      <link name="support_link">
+        <collision name="support_collision">
+          <geometry>
+            <box>
+              <size>0.08 0.08 0.02</size>
+            </box>
+          </geometry>
+        </collision>
+      </link>
+    </model>
+
+    <model name="scan_pedestal">
+      <static>true</static>
+      <pose>0.40 -0.48 0 0 0 0</pose>
+      <link name="pedestal_link">
+        <visual name="pedestal_column">
+          <pose>0 0 0.40 0 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.07</radius>
+              <length>0.80</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>0.18 0.18 0.2 1</ambient>
+            <diffuse>0.18 0.18 0.2 1</diffuse>
+          </material>
+        </visual>
+        <visual name="pedestal_cap">
+          <pose>0 0 0.81 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>0.28 0.28 0.04</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.82 0.82 0.84 1</ambient>
+            <diffuse>0.82 0.82 0.84 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="scan_camera_rig">
+      <static>true</static>
+      <pose>0.17 -0.48 1.15 0 0.55 0</pose>
+      <link name="scan_camera_link">
+        <visual name="camera_pole">
+          <pose>0 0 -0.55 0 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.025</radius>
+              <length>1.10</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>0.20 0.20 0.22 1</ambient>
+            <diffuse>0.20 0.20 0.22 1</diffuse>
+          </material>
+        </visual>
+        <visual name="camera_base">
+          <pose>0 0 -1.11 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>0.18 0.18 0.04</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.18 0.18 0.2 1</ambient>
+            <diffuse>0.18 0.18 0.2 1</diffuse>
+          </material>
+        </visual>
+        <visual name="camera_boom">
+          <pose>0.10 0 -0.05 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>0.20 0.04 0.04</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.20 0.20 0.22 1</ambient>
+            <diffuse>0.20 0.20 0.22 1</diffuse>
+          </material>
+        </visual>
+        <visual name="camera_body">
+          <geometry>
+            <box>
+              <size>0.08 0.06 0.06</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.08 0.08 0.08 1</ambient>
+            <diffuse>0.08 0.08 0.08 1</diffuse>
+          </material>
+        </visual>
+        <sensor type="camera" name="scan_station_camera">
+          <always_on>true</always_on>
+          <visualize>false</visualize>
+          <update_rate>15</update_rate>
+          <camera>
+            <horizontal_fov>1.047</horizontal_fov>
+            <image>
+              <width>640</width>
+              <height>480</height>
+              <format>R8G8B8</format>
+            </image>
+            <clip>
+              <near>0.02</near>
+              <far>3.0</far>
+            </clip>
+          </camera>
+          <plugin name="scan_station_camera_plugin" filename="libgazebo_ros_camera.so">
+            <camera_name>scan_station_camera</camera_name>
+            <frame_name>scan_station_camera_link</frame_name>
+          </plugin>
+        </sensor>
+      </link>
+    </model>
+
+    <model name="bin_rack">
+      <static>true</static>
+      <pose>0.82 0.55 0 0 0 0</pose>
+      <link name="rack_link">
+        <visual name="rack_top">
+          <pose>0 0 0.735 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>0.72 0.24 0.03</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.82 0.82 0.84 1</ambient>
+            <diffuse>0.82 0.82 0.84 1</diffuse>
+          </material>
+        </visual>
+        <visual name="rack_leg_1">
+          <pose>0.31 0.08 0.3675 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>0.04 0.04 0.735</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.65 0.65 0.68 1</ambient>
+            <diffuse>0.65 0.65 0.68 1</diffuse>
+          </material>
+        </visual>
+        <visual name="rack_leg_2">
+          <pose>0.31 -0.08 0.3675 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>0.04 0.04 0.735</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.65 0.65 0.68 1</ambient>
+            <diffuse>0.65 0.65 0.68 1</diffuse>
+          </material>
+        </visual>
+        <visual name="rack_leg_3">
+          <pose>-0.31 0.08 0.3675 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>0.04 0.04 0.735</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.65 0.65 0.68 1</ambient>
+            <diffuse>0.65 0.65 0.68 1</diffuse>
+          </material>
+        </visual>
+        <visual name="rack_leg_4">
+          <pose>-0.31 -0.08 0.3675 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>0.04 0.04 0.735</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.65 0.65 0.68 1</ambient>
+            <diffuse>0.65 0.65 0.68 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <include>
+      <uri>model://sorting_bin</uri>
+      <name>bin_a</name>
+      <pose>0.62 0.55 0.75 0 0 0</pose>
+    </include>
+
+    <model name="bin_a_support">
+      <static>true</static>
+      <pose>0.62 0.55 0.84 0 0 0</pose>
+      <link name="support_link">
+        <collision name="support_collision">
+          <geometry>
+            <box>
+              <size>0.12 0.12 0.02</size>
+            </box>
+          </geometry>
+        </collision>
+      </link>
+    </model>
+
+    <include>
+      <uri>model://sorting_bin</uri>
+      <name>bin_b</name>
+      <pose>0.82 0.55 0.75 0 0 0</pose>
+    </include>
+
+    <model name="bin_b_support">
+      <static>true</static>
+      <pose>0.82 0.55 0.84 0 0 0</pose>
+      <link name="support_link">
+        <collision name="support_collision">
+          <geometry>
+            <box>
+              <size>0.12 0.12 0.02</size>
+            </box>
+          </geometry>
+        </collision>
+      </link>
+    </model>
+
+    <include>
+      <uri>model://sorting_bin</uri>
+      <name>bin_c</name>
+      <pose>1.02 0.55 0.75 0 0 0</pose>
+    </include>
+
+    <model name="bin_c_support">
+      <static>true</static>
+      <pose>1.02 0.55 0.84 0 0 0</pose>
+      <link name="support_link">
+        <collision name="support_collision">
+          <geometry>
+            <box>
+              <size>0.12 0.12 0.02</size>
+            </box>
+          </geometry>
+        </collision>
+      </link>
+    </model>
+
+    <include>
+      <uri>model://qr_object</uri>
+      <name>qr_object</name>
+      <pose>0.72 0.0 0.825 0 0 0</pose>
+    </include>
+  </world>
+</sdf>

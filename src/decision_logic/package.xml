@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>decision_logic</name>
+  <version>0.1.0</version>
+  <description>QR to bin mapping logic for the industrial sort cell.</description>
+  <maintainer email="student@example.com">Robotics Student</maintainer>
+  <license>MIT</license>
+
+  <buildtool_depend>ament_python</buildtool_depend>
+
+  <depend>geometry_msgs</depend>
+  <depend>rclpy</depend>
+  <depend>std_msgs</depend>
+  <depend>workflow_interfaces</depend>
+
+  <exec_depend>launch</exec_depend>
+  <exec_depend>launch_ros</exec_depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>
